@@ -30,6 +30,11 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET Core sdk 6.x'
+      inputs:
+        version: 6.x
+
     - task: DotNetCoreCLI@2
       displayName: Build
       inputs:
