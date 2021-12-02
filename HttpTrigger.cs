@@ -26,7 +26,7 @@ namespace Company.Function
             name = name ?? data?.name;
 
             string responseMessage = string.IsNullOrEmpty(name)
-                ? "devops pipeline scm finally ..... This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
+                ? "devops pipeline scm second !!!! ..... This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
                 : $"Hello, {name}. This HTTP triggered function executed successfully.";
 
             return new OkObjectResult(responseMessage);
