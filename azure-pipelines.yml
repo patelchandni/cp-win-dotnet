@@ -11,7 +11,7 @@ variables:
   azureSubscription: '4e3cdf23-b58d-46b4-b5c8-44f252703b38'
 
   # Function app name
-  functionAppName: 'cp-lin-dotnet-dedicated'
+  functionAppName: 'cp-lin-dotnet-consumption'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
