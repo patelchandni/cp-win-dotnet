@@ -26,7 +26,7 @@ namespace Company.Function
             name = name ?? data?.name;
 
             string responseMessage = string.IsNullOrEmpty(name)
-                ? "2/16 rbac rfp=1 default ..... This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
+                ? "2/17 scm rfp=1 default ..... This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
                 : $"Hello, {name}. This HTTP triggered function executed successfully.";
 
             return new OkObjectResult(responseMessage);
