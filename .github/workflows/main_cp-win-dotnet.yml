@@ -4,12 +4,14 @@
 name: Build and deploy dotnet core app to Azure Function App - cp-win-dotnet
 
 on:
-  push:
-    branches:
-      - main
+  #push:
+    #branches:
+      #- main
   workflow_dispatch:
 
 env:
+  AZURE_RESOURCE_GROUP: function-app-storage-private-endpoints   # set this to your Azure Resource group's name  
+  AZURE_SUBSCRIPTION_ID: e160ca65-836f-4be6-8ef5-e6234b90de87   # set this to your Azure Subscription Id
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
 
@@ -17,6 +19,12 @@ jobs:
   build-and-deploy:
     runs-on: windows-latest
     steps:
+    
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS  }}
+        
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v2
 
@@ -32,11 +40,11 @@ jobs:
           dotnet build --configuration Release --output ./output
           popd
 
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
-        id: fa
+      - name: 'Deploy ARM Template'
+        uses: azure/arm-deploy@v1
         with:
-          app-name: 'cp-win-dotnet'
-          slot-name: 'Production'
-          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0324910F79EB4176AD09DF6326EFFC90 }}
+          # You can change these environment variables for your configuration:   AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP
+          subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
+          template: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/azuredeploy.json'  # Set this to the location of your template file
+          parameters: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/azuredeploy.parameters.json' # Set this to the location of your parameters file
