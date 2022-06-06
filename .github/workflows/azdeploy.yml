@@ -16,8 +16,8 @@ env:
   
   WEBAPP: func-h4lz5w7bfnvhe
   GROUP: function-app-storage-private-endpoints
-  ACCOUNT: name-for-storage-acct  # Does not have to exist, this will be created for you
-  CONTAINER: name-for-storage-container
+  ACCOUNT: nameforstorageacct  # Does not have to exist, this will be created for you
+  CONTAINER: nameforstoragecontainer
 
 jobs:
   build-and-deploy:
