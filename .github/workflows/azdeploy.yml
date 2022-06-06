@@ -59,10 +59,10 @@ jobs:
           dest: app.zip
 
       - name: Azure CLI script
+        uses: azure/CLI@v1
         with:
           azcliversion: 2.19.1
-          shell: pwsh
-          run: |
+          inlineScript: |
             az storage account create   -n $ACCOUNT   -g $GROUP -l westus
             az storage container create -n $CONTAINER --account-name $ACCOUNT
             az storage blob upload      -f app.zip    --account-name $ACCOUNT -c $CONTAINER -n $ACCOUNT
