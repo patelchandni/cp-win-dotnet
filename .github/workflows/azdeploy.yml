@@ -13,6 +13,11 @@ env:
   AZURE_SUBSCRIPTION_ID: e160ca65-836f-4be6-8ef5-e6234b90de87   # set this to your Azure Subscription Id
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
+  
+  WEBAPP: func-h4lz5w7bfnvhe
+  GROUP: function-app-storage-private-endpoints
+  ACCOUNT: name-for-storage-acct  # Does not have to exist, this will be created for you
+  CONTAINER: name-for-storage-container
 
 jobs:
   build-and-deploy:
