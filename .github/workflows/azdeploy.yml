@@ -55,8 +55,8 @@ jobs:
           az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} --public-access blob
           az storage blob upload -f app.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip
           
-          ZIP_URL=$(az storage blob generate-sas --full-uri --permissions r --expiry 2022-7-1 --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip | xargs)
+          $Env:ZIP_URL=$(az storage blob generate-sas --full-uri --permissions r --expiry 2022-7-1 --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip)
           
-          az deployment group create --name deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --template-file azuredeploy.json --parameters functionAppName='${{ env.FUNCTION_APP }}' packageUri='$ZIP_URL' 
+          az deployment group create --name deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --template-file azuredeploy.json --parameters functionAppName='${{ env.FUNCTION_APP }}' packageUri=$Env:ZIP_URL 
 
           az storage container delete -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
