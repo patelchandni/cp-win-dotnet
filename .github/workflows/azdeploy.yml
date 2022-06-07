@@ -9,15 +9,13 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_RESOURCE_GROUP: function-app-storage-private-endpoints   # set this to your Azure Resource group's name  
   AZURE_SUBSCRIPTION_ID: e160ca65-836f-4be6-8ef5-e6234b90de87   # set this to your Azure Subscription Id
+  AZURE_RESOURCE_GROUP: function-app-storage-private-endpoints   # set this to your Azure Resource group's name  
+  FUNCTION_APP: func-h4lz5w7bfnvhe # set this to your Azure Function app's name  
+  STORAGE_ACCOUNT: nameforstorageacct  # Does not have to exist, public storage will be created for deployment
+  CONTAINER: nameforstoragecontainer # name for a temporary container needed for deployment
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
-  
-  WEBAPP: func-h4lz5w7bfnvhe
-  GROUP: function-app-storage-private-endpoints
-  ACCOUNT: nameforstorageacct  # Does not have to exist, this will be created for you
-  CONTAINER: nameforstoragecontainer
 
 jobs:
   build-and-deploy:
@@ -50,25 +48,15 @@ jobs:
           files: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
           dest: app.zip
 
-      #- name: 'Deploy ARM Template'
-        #uses: azure/arm-deploy@v1
-        #with:
-          # You can change these environment variables for your configuration:   AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP
-          #subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
-          #resourceGroupName: ${{ env.AZURE_RESOURCE_GROUP }}
-          #template: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/azuredeploy.json'  # Set this to the location of your template file
-          #parameters: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/azuredeploy.parameters.json' # Set this to the location of your parameters file
-    
       - name: 'Run az commands'
         shell: pwsh
         run: |
-          az extension add --name webapp
-          az storage account create   -n $ACCOUNT   -g $GROUP -l westus
-          az storage container create -n $CONTAINER --account-name $ACCOUNT
-          az storage blob upload      -f app.zip    --account-name $ACCOUNT -c $CONTAINER -n $ACCOUNT
+          az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} --allow-blob-public-access true
+          az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} --public-access blob
+          az storage blob upload -f app.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip
+          
+          ZIP_URL=$(az storage blob generate-sas --full-uri --permissions r --expiry 2022-7-1 --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip | xargs)
+          
+          az deployment group create --name deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --template-file azuredeploy.json --parameters functionAppName='${{ env.FUNCTION_APP }}' packageUri='$ZIP_URL' 
 
-          ZIP_URL=$(az storage blob generate-sas --full-uri --permissions r --expiry ${{ env.expiry }} --account-name $ACCOUNT -c $CONTAINER -n $ACCOUNT | xargs)
-
-          az webapp deploy --name $WEBAPP --resource-group $GROUP --type zip --src-url  $ZIP_URL --async false
-
-          az storage container delete -n $CONTAINER --account-name $ACCOUNT 
+          az storage container delete -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
