@@ -51,7 +51,7 @@ jobs:
         run: |
             az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} 
             az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
-            az storage blob upload -f ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip --overwrite true
+            az storage blob upload -f ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/package.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip --overwrite true
             
       - name: Zip Deployment using ARM Template
         shell: pwsh
