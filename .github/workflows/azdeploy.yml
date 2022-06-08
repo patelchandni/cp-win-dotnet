@@ -27,7 +27,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS  }}
         
-      - name: 'Checkout GitHub Action'
+      - name: Checkout GitHub Action
         uses: actions/checkout@v2
 
       - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
@@ -35,7 +35,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: 'Resolve Project Dependencies Using Dotnet'
+      - name: Resolve Project Dependencies Using Dotnet
         shell: pwsh
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
@@ -48,22 +48,23 @@ jobs:
           files: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
           dest: app.zip
 
-      - name: 'Az Commands to Create Storage for Deployment'
+      - name: Setup Storage, Container & Blob for Deployment
         shell: pwsh
         run: |
-            az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} --allow-blob-public-access true
-            az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} --public-access blob
+            az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} 
+            az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
             az storage blob upload -f app.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip --overwrite true
+       #--allow-blob-public-access true
+       #--public-access blob
             
-      - name: 'Az Command for Deployment with ARM Template'
+      - name: Zip Deployment using ARM Template
         shell: pwsh
         run: |
             $Env:Expiry=(get-date).AddMinutes(30).ToString("yyyy-MM-ddTHH:mm:ssZ")
             $Env:ZIP_URL=$(az storage blob generate-sas --full-uri --permissions r --expiry $Env:Expiry --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip)
-            az deployment group create --name deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --template-file azuredeploy.json --parameters functionAppName='${{ env.FUNCTION_APP }}' packageUri='' 
-        #$Env:ZIP_URL 
+            az deployment group create --name deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --template-file azuredeploy.json --parameters functionAppName='${{ env.FUNCTION_APP }}' packageUri=$Env:ZIP_URL 
             
-      - name: 'Az Commands to Delete Temporary Container'
+      - name: Delete Temporary Container & Blob
         shell: pwsh
         run: |
             az storage container delete -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
