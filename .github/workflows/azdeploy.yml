@@ -11,7 +11,7 @@ on:
 env:
   AZURE_RESOURCE_GROUP: 'function-app-storage-private-endpoints'   # set this to your Azure Resource group's name  
   FUNCTION_APP: 'func-h4lz5w7bfnvhe' # set this to your Azure Function app's name  
-  STORAGE_ACCOUNT: 'deploymentstorageaccounth4lz5w7bfnvhe'  # Does not have to exist, storage will be created for deployment
+  STORAGE_ACCOUNT: 'deploymenth4lz5w7bfnvhe'  # storage will be created for deployment if not exists. Requirements: unique name, 3 to 24 characters in length, use numbers and lower-case letters only
   CONTAINER: 'temporarydeploymentcontainer' # temporary container needed for deployment
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
