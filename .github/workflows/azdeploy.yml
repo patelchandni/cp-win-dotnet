@@ -48,7 +48,7 @@ jobs:
           files: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
           dest: app.zip
 
-      - name: 'Az Commands to Create Temporary Storage'
+      - name: 'Az Commands to Create Storage for Deployment'
         shell: pwsh
         run: |
             az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} --allow-blob-public-access true
@@ -62,7 +62,7 @@ jobs:
             $Env:ZIP_URL=$(az storage blob generate-sas --full-uri --permissions r --expiry $Env:Expiry --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip)
             az deployment group create --name deploy --resource-group ${{ env.AZURE_RESOURCE_GROUP }} --template-file azuredeploy.json --parameters functionAppName='${{ env.FUNCTION_APP }}' packageUri=$Env:ZIP_URL 
             
-      - name: 'Az Commands to Delete Temporary Storage'
+      - name: 'Az Commands to Delete Temporary Container'
         shell: pwsh
         run: |
-            az storage account delete -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }}
+            az storage container delete -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
