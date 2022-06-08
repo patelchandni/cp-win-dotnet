@@ -12,8 +12,8 @@ env:
   AZURE_SUBSCRIPTION_ID: e160ca65-836f-4be6-8ef5-e6234b90de87   # set this to your Azure Subscription Id
   AZURE_RESOURCE_GROUP: function-app-storage-private-endpoints   # set this to your Azure Resource group's name  
   FUNCTION_APP: func-h4lz5w7bfnvhe # set this to your Azure Function app's name  
-  STORAGE_ACCOUNT: nameforstorageacct  # Does not have to exist, public storage will be created for deployment
-  CONTAINER: nameforstoragecontainer # name for a temporary container needed for deployment
+  STORAGE_ACCOUNT: deploymentstorageaccount  # Does not have to exist, storage will be created for deployment
+  CONTAINER: temporarydeploymentcontainer # name for a temporary container needed for deployment
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
 
@@ -54,8 +54,6 @@ jobs:
             az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} 
             az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} 
             az storage blob upload -f app.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip --overwrite true
-       #--allow-blob-public-access true
-       #--public-access blob
             
       - name: Zip Deployment using ARM Template
         shell: pwsh
