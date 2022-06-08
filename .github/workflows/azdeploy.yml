@@ -53,7 +53,7 @@ jobs:
         run: |
             az storage account create -n ${{ env.STORAGE_ACCOUNT }} -g ${{ env.AZURE_RESOURCE_GROUP }} --allow-blob-public-access true
             az storage container create -n ${{ env.CONTAINER }} --account-name ${{ env.STORAGE_ACCOUNT }} --public-access blob
-            az storage blob upload -f app.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip
+            az storage blob upload -f app.zip --account-name ${{ env.STORAGE_ACCOUNT }} -c ${{ env.CONTAINER }} -n package.zip --overwrite true
             
       - name: 'Az Command for Deployment with ARM Template'
         shell: pwsh
