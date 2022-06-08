@@ -41,10 +41,10 @@ jobs:
           dotnet build --configuration Release --output ./output
           popd
           
-      #- name: Zip Function App Content
-        #shell: pwsh
-        #run: |
-          #Compress-Archive -Path ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output -DestinationPath ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/package.zip
+      - name: Zip Function App Content
+        shell: pwsh
+        run: |
+          Compress-Archive -Path ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output -DestinationPath ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/package.zip
  
       - name: Setup Storage, Container & Blob for Deployment
         shell: pwsh
