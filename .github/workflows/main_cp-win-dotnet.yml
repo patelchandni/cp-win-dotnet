@@ -5,8 +5,8 @@ name: Build and deploy dotnet core app to Azure Function App - cp-win-dotnet
 
 on:
   push:
-    branches:
-      - main
+    #branches:
+      #- main
   workflow_dispatch:
 
 env:
