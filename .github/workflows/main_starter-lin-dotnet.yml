@@ -5,8 +5,8 @@ name: Build and deploy dotnet core project to Azure Function App - starter-lin-d
 
 on:
   push:
-    branches:
-      - main
+    #branches:
+      #- main
   workflow_dispatch:
 
 env:
