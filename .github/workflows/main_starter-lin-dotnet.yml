@@ -4,7 +4,7 @@
 name: Build and deploy dotnet core project to Azure Function App - starter-lin-dotnet
 
 on:
-  push:
+  #push:
     #branches:
       #- main
   workflow_dispatch:
