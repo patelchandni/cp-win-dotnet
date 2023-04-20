@@ -33,7 +33,7 @@ jobs:
           popd
 
       - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
+        uses: patelchandni/functions-action@v1.5.0
         id: fa
         with:
           app-name: 'cp-testing-ga-win-pre'
